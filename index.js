@@ -38,4 +38,33 @@ const getAllModulesInfoIntoArray = entry => {
   return modulesArray;
 };
 
-module.exports = { getModuleInfo, getAllModulesInfoIntoArray };
+const pack = modules => {
+  const moduleSrc = modules
+    .map(module => {
+      return `${module.id}: {
+      factory: (module, require) => {
+        ${module.fileContent}
+      },
+      map: ${JSON.stringify(module.map)}
+    }`;
+    })
+    .join();
+
+  return `(modules => {
+    const require = id => {
+      const { factory, map } = modules[id]
+      const localRequire = name => require(map[name])
+      const module = { exports: {} }
+
+      factory(module, localRequire)
+
+      return module.exports
+    }
+
+    require(0)
+  })({ ${moduleSrc} })`;
+};
+
+module.exports = entry => {
+  return pack(getAllModulesInfoIntoArray(entry));
+};
