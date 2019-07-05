@@ -24,10 +24,8 @@ const getAllModulesInfoIntoArray = entry => {
   const modulesArray = [rootModuleInfo];
 
   for (let module of modulesArray) {
-    // this is still entry obj
     module.map = {};
     module.listAllRequires.forEach(moduleDep => {
-      // ./entryModule1.js
       const baseDir = path.dirname(module.filePath);
       const moduleDepPath = resolve(moduleDep, { baseDir });
       const moduleDepInfo = getModuleInfo(moduleDepPath);
@@ -61,7 +59,7 @@ const pack = modules => {
       return module.exports
     }
 
-    require(0)
+    return require(0)
   })({ ${moduleSrc} })`;
 };
 
